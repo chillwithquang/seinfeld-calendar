@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import {
   makeStyles,
   createMuiTheme,
@@ -16,9 +16,9 @@ import blue from '@material-ui/core/colors/blue';
 import PropTypes from 'prop-types';
 import { Link, withRouter } from 'react-router-dom';
 import Icon from '@material-ui/core/Icon';
-import withAuth from './withAuth';
 import { HOME_URL, LOGIN_URL, SIGNUP_URL } from '../config';
 import LogoCes from '../assets/CES-LOGO-PNG.png';
+import { AuthContext } from '../contexts/AuthContext';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -91,9 +91,8 @@ function UserInformation({ avatar, loggedInUser }) {
   );
 }
 
-function LoginButton({ setLoggedInUser }) {
+function LoginButton() {
   const classes = useStyles();
-  setLoggedInUser('');
   return (
     <Toolbar>
       <MaterialLink to={LOGIN_URL} component={Link} underline="none">
@@ -106,19 +105,28 @@ function LoginButton({ setLoggedInUser }) {
   );
 }
 
-function Header({ loggedInUser, setLoggedInUser }) {
+function Header() {
   const classes = useStyles();
   const [avatar, setAvatar] = useState(null);
+  const { loggedInUser, setLoggedInUser } = useContext(AuthContext);
+  const user = localStorage.getItem('user');
+  let name = null;
+  if (user !== null) {
+    name = JSON.parse(user).name;
+  }
 
   useEffect(() => {
     setAvatar(() => faker.image.avatar());
-  }, []);
+    if (name !== null) {
+      setLoggedInUser(name);
+    }
+  }, [name]);
 
   return (
     <div className={classes.root}>
       <AppBar position="fixed">
         <Toolbar className={classes.nav}>
-          <Icon className={classes.iconList}>list</Icon>
+          {user !== null && <Icon className={classes.iconList}>list</Icon>}
           <Typography component="div" className={classes.title}>
             <MaterialLink to={HOME_URL} component={Link} exact="string">
               <img
@@ -128,10 +136,10 @@ function Header({ loggedInUser, setLoggedInUser }) {
               />
             </MaterialLink>
           </Typography>
-          {loggedInUser && loggedInUser.length > 0 ? (
+          {user !== null ? (
             <UserInformation avatar={avatar} loggedInUser={loggedInUser} />
           ) : (
-            <LoginButton setLoggedInUser={setLoggedInUser} />
+            <LoginButton />
           )}
         </Toolbar>
       </AppBar>
@@ -139,18 +147,13 @@ function Header({ loggedInUser, setLoggedInUser }) {
   );
 }
 
+UserInformation.getDefaultProps = {
+  avatar: null,
+};
+
 UserInformation.propTypes = {
-  avatar: PropTypes.string.isRequired,
+  avatar: PropTypes.string,
   loggedInUser: PropTypes.string.isRequired,
 };
 
-LoginButton.propTypes = {
-  setLoggedInUser: PropTypes.func.isRequired,
-};
-
-Header.propTypes = {
-  loggedInUser: PropTypes.string.isRequired,
-  setLoggedInUser: PropTypes.func.isRequired,
-};
-
-export default withRouter(withAuth(Header));
+export default withRouter(Header);
