@@ -9,6 +9,7 @@ import { useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import axios from 'axios';
 import { useHistory } from 'react-router-dom';
+import { BASE_URL } from '../config/config';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -55,6 +56,7 @@ function SignUp() {
       ...prevState,
       [name]: value,
     }));
+    setAlert({ ...alert, message: '' });
   };
   const handleJobChange = (job) => {
     if (state.job === job) {
@@ -79,7 +81,7 @@ function SignUp() {
     } else {
       setAlert({ severity: 'info', message: 'Signing up...Please wait' });
       setIsLoading(true);
-      const url = 'https://seinfeldcalendar-backend.herokuapp.com/user/sign-up';
+      const url = `${BASE_URL}/user/sign-up`;
       axios
         .post(url, state)
         .then((response) => {
@@ -91,12 +93,14 @@ function SignUp() {
           if (error.response.status === 400) {
             setAlert({
               severity: 'error',
+              param: 'name',
               message: error.response.data.message,
             });
           }
           if (error.response.status === 422) {
             setAlert({
               severity: 'error',
+              param: error.response.data.errors[0].param,
               message: error.response.data.errors[0].msg,
             });
           }
@@ -119,6 +123,11 @@ function SignUp() {
           value={state.name}
           onChange={handleChange}
         />
+        {alert.message && alert.param === 'name' ? (
+          <Alert severity={alert.severity} className={classes.alert}>
+            {alert.message}
+          </Alert>
+        ) : null}
         <Typography variant="subtitle1">Email</Typography>
         <TextField
           variant="outlined"
@@ -128,6 +137,11 @@ function SignUp() {
           value={state.email}
           onChange={handleChange}
         />
+        {alert.message && alert.param === 'email' ? (
+          <Alert severity={alert.severity} className={classes.alert}>
+            {alert.message}
+          </Alert>
+        ) : null}
         <Typography variant="subtitle1">Password</Typography>
         <TextField
           variant="outlined"
@@ -138,6 +152,11 @@ function SignUp() {
           value={state.password}
           onChange={handleChange}
         />
+        {alert.message && alert.param === 'password' ? (
+          <Alert severity={alert.severity} className={classes.alert}>
+            {alert.message}
+          </Alert>
+        ) : null}
         <Typography variant="subtitle1">You are (optional)</Typography>
         <Grid container spacing={1} className={classes.grid}>
           <Grid item xs>
@@ -187,7 +206,7 @@ function SignUp() {
           SIGN UP
         </Button>
       </form>
-      {alert.message ? (
+      {alert.message && !alert.param ? (
         <Alert severity={alert.severity} className={classes.alert}>
           {alert.message}
         </Alert>

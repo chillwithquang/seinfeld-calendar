@@ -8,6 +8,7 @@ import axios from 'axios';
 import Alert from '@material-ui/lab/Alert';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
+import { BASE_URL } from '../config/config';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -56,7 +57,7 @@ function Login() {
     } else {
       setAlert({ severity: 'info', message: 'Verifying...Please wait' });
       setIsLoading(true);
-      const url = 'https://seinfeldcalendar-backend.herokuapp.com/user/log-in';
+      const url = `${BASE_URL}/user/log-in`;
       axios
         .post(url, state)
         .then((response) => {
@@ -74,6 +75,7 @@ function Login() {
           if (error.response.status === 422) {
             setAlert({
               severity: 'error',
+              param: error.response.data.errors[0].param,
               message: error.response.data.errors[0].msg,
             });
           }
@@ -95,6 +97,11 @@ function Login() {
           value={state.name}
           onChange={handleChange}
         />
+        {alert.message && alert.param === 'name' ? (
+          <Alert severity={alert.severity} className={classes.alert}>
+            {alert.message}
+          </Alert>
+        ) : null}
         <Typography variant="subtitle1">Password</Typography>
         <TextField
           variant="outlined"
@@ -105,6 +112,11 @@ function Login() {
           value={state.password}
           onChange={handleChange}
         />
+        {alert.message && alert.param === 'password' ? (
+          <Alert severity={alert.severity} className={classes.alert}>
+            {alert.message}
+          </Alert>
+        ) : null}
         <Link href="/" variant="body2" component="p">
           Forgot Password
         </Link>
@@ -127,7 +139,7 @@ function Login() {
           </Typography>
         </Link>
       </form>
-      {alert.message ? (
+      {alert.message && !alert.param ? (
         <Alert severity={alert.severity} className={classes.alert}>
           {alert.message}
         </Alert>
