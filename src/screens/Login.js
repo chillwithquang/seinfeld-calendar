@@ -54,8 +54,8 @@ function Login({ loggedInUser, setLoggedInUser }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    if (state.name === '' || state.password === '') {
-      loggedInUser('');
+    setLoggedInUser(state.name);
+    if (loggedInUser === '' || state.password === '') {
       setAlert({
         severity: 'error',
         message: 'Please enter your username and password!',
@@ -75,7 +75,6 @@ function Login({ loggedInUser, setLoggedInUser }) {
           };
           setAlert({ severity: 'success', message: 'Login successfully!' });
           localStorage.setItem('user', JSON.stringify(user));
-          setLoggedInUser(state.name);
           history.push(`${HOME_URL}`);
         },
         (error) => {
@@ -166,11 +165,12 @@ function Login({ loggedInUser, setLoggedInUser }) {
 
 Login.getDefaultProps = {
   loggedInUser: null,
+  setLoggedInUser: () => {},
 };
 
 Login.propTypes = {
   loggedInUser: PropTypes.string,
-  setLoggedInUser: PropTypes.func.isRequired,
+  setLoggedInUser: PropTypes.func,
 };
 
 export default withAuth(Login);
