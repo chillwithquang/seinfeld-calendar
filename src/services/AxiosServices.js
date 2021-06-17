@@ -16,8 +16,31 @@ export function postInfo(url, data, callback, errorCallback) {
 export function postHabit(data, callback) {
   const user = localStorage.getItem('user');
   const { token } = JSON.parse(user);
-  axiosService.defaults.headers.common.Authorization = `Breearer ${token}`;
+  axiosService.defaults.headers.common.Authorization = `Bearer ${token}`;
   axiosService
     .post(`${ADD_HABIT_URL}`, data)
     .then((response) => callback(response));
 }
+
+export const postInfowithToken = (url, data, callback, errorCallback) => {
+  const user = localStorage.getItem('user');
+  const { token } = JSON.parse(user);
+  axiosService.defaults.headers.common.Authorization = `Bearer ${token}`;
+  axios
+    .post(url, data)
+    .then((response) => callback(response))
+    .catch((error) => errorCallback(error));
+};
+
+export const getInfowithToken = (url, callback, errorCallback) => {
+  const user = localStorage.getItem('user');
+  let token = null;
+  if (user !== null) {
+    token = JSON.parse(user);
+  }
+  axiosService.defaults.headers.common.Authorization = `Bearer ${token}`;
+  axios
+    .get(url)
+    .then((response) => callback(response))
+    .catch((error) => errorCallback(error));
+};

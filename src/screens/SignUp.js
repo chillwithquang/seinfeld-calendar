@@ -53,6 +53,7 @@ function SignUp() {
     }));
     setAlert({ ...alert, message: '' });
   };
+
   const handleJobChange = (job) => {
     if (state.job === job) {
       setState((prevState) => ({
@@ -66,6 +67,7 @@ function SignUp() {
       }));
     }
   };
+
   const handleSubmit = (event) => {
     event.preventDefault();
     if (state.name === '' || state.email === '' || state.password === '') {

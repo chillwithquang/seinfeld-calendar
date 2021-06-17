@@ -146,14 +146,14 @@ export default function HabitForm({ idHabit, children }) {
     if (state.name === '') {
       setAlert({
         severity: 'error',
-        message: 'Name is not empy!',
+        message: 'Name is not empty!',
       });
       setOpen(true);
     } else {
       if (endDate.getTime() < startDate.getTime()) {
         setAlert({
           severity: 'error',
-          message: 'End day is not less than Start day!',
+          message: 'End day is must not before Start day!',
         });
 
         setStartDate(new Date());

@@ -4,7 +4,7 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Link from '@material-ui/core/Link';
 import Button from '@material-ui/core/Button';
-import { Alert } from '@material-ui/lab';
+import Alert from '@material-ui/lab/Alert';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
@@ -50,7 +50,6 @@ function Login() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    // setLoggedInUser(state.name);
     if (state.name === '' || state.password === '') {
       setAlert({
         severity: 'error',
@@ -143,8 +142,8 @@ function Login() {
         >
           LOGIN
         </Button>
-        <Link href={SIGNUP_URL} color="secondary">
-          <Typography variant="body2" align="center" color="secondary">
+        <Link href={SIGNUP_URL} color="textPrimary">
+          <Typography variant="body2" align="center">
             Not have an account?
             <strong>{' Sign Up'}</strong>
           </Typography>
