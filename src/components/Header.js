@@ -17,7 +17,7 @@ import PropTypes from 'prop-types';
 import { Link, withRouter } from 'react-router-dom';
 import Icon from '@material-ui/core/Icon';
 import withAuth from './withAuth';
-import { LOGIN_URL, SIGNUP_URL } from '../config';
+import { HOME_URL, LOGIN_URL, SIGNUP_URL } from '../config';
 import LogoCes from '../assets/CES-LOGO-PNG.png';
 
 const useStyles = makeStyles((theme) => ({
@@ -62,51 +62,53 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+const theme = createMuiTheme({
+  palette: {
+    primary: { main: blue[700] },
+  },
+});
+
+function UserInformation({ avatar, loggedInUser }) {
+  const classes = useStyles();
+  return (
+    <Toolbar>
+      <Typography variant="h6">
+        <ThemeProvider theme={theme}>
+          <Button variant="contained" color="primary">
+            Create New Habit
+          </Button>
+        </ThemeProvider>
+      </Typography>
+      <Typography variant="body2" className={classes.report}>
+        Report
+      </Typography>
+      <NotificationsOutlinedIcon className={classes.icon} />
+      <Avatar src={avatar} className={classes.avatar} />
+      <Typography variant="subtitle1" className={classes.name}>
+        {loggedInUser}
+      </Typography>
+    </Toolbar>
+  );
+}
+
+function LoginButton({ setLoggedInUser }) {
+  const classes = useStyles();
+  setLoggedInUser('');
+  return (
+    <Toolbar>
+      <MaterialLink to={LOGIN_URL} component={Link} underline="none">
+        <Button className={classes.btn}>Login</Button>
+      </MaterialLink>
+      <MaterialLink to={SIGNUP_URL} component={Link} underline="none">
+        <Button className={classes.btn}>Signup</Button>
+      </MaterialLink>
+    </Toolbar>
+  );
+}
+
 function Header({ loggedInUser, setLoggedInUser }) {
   const classes = useStyles();
   const [avatar, setAvatar] = useState(null);
-
-  const theme = createMuiTheme({
-    palette: {
-      primary: { main: blue[700] },
-    },
-  });
-
-  function LoggedIn() {
-    return (
-      <Toolbar>
-        <Typography variant="h6">
-          <ThemeProvider theme={theme}>
-            <Button variant="contained" color="primary">
-              Create New Habit
-            </Button>
-          </ThemeProvider>
-        </Typography>
-        <Typography variant="body2" className={classes.report}>
-          Report
-        </Typography>
-        <NotificationsOutlinedIcon className={classes.icon} />
-        <Avatar src={avatar} className={classes.avatar} />
-        <Typography variant="subtitle1" className={classes.name}>
-          {loggedInUser}
-        </Typography>
-      </Toolbar>
-    );
-  }
-
-  function NotLoggedIn() {
-    setLoggedInUser('');
-    return (
-      <Toolbar>
-        <MaterialLink to={LOGIN_URL} component={Link} underline="none">
-          <Button className={classes.btn}>Login</Button>
-        </MaterialLink>
-        <MaterialLink to={SIGNUP_URL} component={Link} underline="none">
-          <Button className={classes.btn}>Signup</Button>
-        </MaterialLink>
-      </Toolbar>
-    );
-  }
 
   useEffect(() => {
     setAvatar(() => faker.image.avatar());
@@ -118,7 +120,7 @@ function Header({ loggedInUser, setLoggedInUser }) {
         <Toolbar className={classes.nav}>
           <Icon className={classes.iconList}>list</Icon>
           <Typography component="div" className={classes.title}>
-            <MaterialLink to="/" component={Link} exact>
+            <MaterialLink to={HOME_URL} component={Link} exact="string">
               <img
                 className={classes.cover}
                 src={LogoCes}
@@ -127,9 +129,9 @@ function Header({ loggedInUser, setLoggedInUser }) {
             </MaterialLink>
           </Typography>
           {loggedInUser && loggedInUser.length > 0 ? (
-            <LoggedIn />
+            <UserInformation avatar={avatar} loggedInUser={loggedInUser} />
           ) : (
-            <NotLoggedIn />
+            <LoginButton setLoggedInUser={setLoggedInUser} />
           )}
         </Toolbar>
       </AppBar>
@@ -137,9 +139,18 @@ function Header({ loggedInUser, setLoggedInUser }) {
   );
 }
 
+UserInformation.propTypes = {
+  avatar: PropTypes.string.isRequired,
+  loggedInUser: PropTypes.string.isRequired,
+};
+
+LoginButton.propTypes = {
+  setLoggedInUser: PropTypes.func.isRequired,
+};
+
 Header.propTypes = {
   loggedInUser: PropTypes.string.isRequired,
-  setLoggedInUser: PropTypes.string.isRequired,
+  setLoggedInUser: PropTypes.func.isRequired,
 };
 
 export default withRouter(withAuth(Header));

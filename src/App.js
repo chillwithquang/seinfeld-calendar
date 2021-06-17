@@ -7,7 +7,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import Home from './screens/Home';
 import Login from './screens/Login';
 import Signup from './screens/Signup';
-import { LOGIN_URL, SIGNUP_URL } from './config';
+import { HOME_URL, LOGIN_URL, SIGNUP_URL } from './config';
 
 function App() {
   return (
@@ -32,7 +32,7 @@ function App() {
           }}
         >
           <Switch>
-            <Route exact path="/">
+            <Route exact path={HOME_URL}>
               <Home />
             </Route>
             <Route path={LOGIN_URL}>
