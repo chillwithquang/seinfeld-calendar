@@ -128,7 +128,7 @@ function Login() {
             {alert.message}
           </Alert>
         ) : null}
-        <Link href={HOME_URL} variant="body2" component="p" color="secondary">
+        <Link href={HOME_URL} variant="body2" component="p" color="textPrimary">
           Forgot Password
         </Link>
         <Button
@@ -143,8 +143,8 @@ function Login() {
         >
           LOGIN
         </Button>
-        <Link href={SIGNUP_URL} color="secondary">
-          <Typography variant="body2" align="center" color="secondary">
+        <Link href={SIGNUP_URL} color="textPrimary">
+          <Typography variant="body2" align="center">
             Not have an account?
             <strong>{' Sign Up'}</strong>
           </Typography>

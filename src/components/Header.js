@@ -69,7 +69,7 @@ function UserInformation({ avatar, loggedInUser }) {
     <div>
       <Toolbar>
         <Typography variant="h6">
-          <HabitForm>Create New Habit</HabitForm>
+          <HabitForm>CREATE NEW HABIT</HabitForm>
         </Typography>
         <Typography variant="body2" className={classes.report}>
           Report

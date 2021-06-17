@@ -1,0 +1,110 @@
+.year {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  padding-left: 15px;
+  padding-right: 15px;
+  background-color: white;
+}
+
+.month {
+  margin: 5px 8px 15px 8px;
+}
+
+.month-name {
+  color: black;
+  font-weight: bold;
+  text-align: center;
+}
+
+.day {
+  display: inline-block;
+  width: 40px;
+  height: 30px;
+  text-align: center;
+  line-height: 30px;
+  color: gray;
+}
+
+.date {
+  width: 20px;
+  height: 20px;
+  margin: 3px 10px 5px;
+  padding: 0px;
+  background-color: white;
+  border-radius: 50px;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  position: relative;
+  font-family: 'Lato', sans-serif;
+}
+
+.date:disabled {
+  cursor: default;
+  color: black;
+}
+
+.diff-month,
+.diff-month:disabled {
+  color: grey;
+}
+
+.event-date:hover {
+  cursor: pointer;
+  color: white;
+  background-color: gray;
+}
+
+.date.today {
+  background-color: var(--today-day-bg-color);
+  color: var(--today-color);
+}
+
+.line {
+  margin-top: 0px;
+  margin-bottom: 5px;
+}
+
+.event-dot {
+  height: 5px;
+  width: 5px;
+  border-radius: 50%;
+  background-color: orangered;
+  position: absolute;
+  top: -3px;
+  left: -1px;
+}
+
+.today-outline {
+  box-shadow: 0 0 0 3px var(--today-day-bg-color);
+}
+
+.done {
+  color: white;
+  background-color: var(--done-color);
+}
+.undone {
+  color: white;
+  background-color: var(--undone-color);
+}
+
+.uncheck {
+  color: white;
+  background-color: var(--uncheck-color);
+}
+
+.week-row {
+  position: relative;
+}
+
+.year-rbc-overlay {
+  position: absolute;
+  inset: 30px auto auto 0px;
+  width: 235px;
+  z-index: 5;
+  border: 1px solid #e5e5e5;
+  background-color: #fff;
+  box-shadow: 0 5px 15px rgb(0 0 0 / 25%);
+  padding: 10px;
+}

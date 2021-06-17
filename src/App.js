@@ -9,6 +9,7 @@ import Login from './screens/Login';
 import SignUp from './screens/SignUp';
 import { HOME_URL, LOGIN_URL, SIGNUP_URL } from './config';
 import { HabitProvider } from './contexts/HabitContext';
+import Habit from './screens/Habit';
 
 function App() {
   return (
@@ -19,7 +20,7 @@ function App() {
           <Typography
             component="div"
             style={{
-              backgroundColor: '#fff',
+              backgroundColor: 'white',
               height: '10vh',
             }}
           >
@@ -29,8 +30,7 @@ function App() {
           <Typography
             component="div"
             style={{
-              backgroundColor: '#fff',
-              height: '90vh',
+              backgroundColor: 'white',
             }}
           >
             <Switch>
@@ -42,6 +42,9 @@ function App() {
               </Route>
               <Route path={SIGNUP_URL}>
                 <SignUp />
+              </Route>
+              <Route path="/habit/:habitId">
+                <Habit />
               </Route>
             </Switch>
           </Typography>

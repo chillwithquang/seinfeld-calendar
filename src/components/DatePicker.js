@@ -1,13 +1,11 @@
 /* eslint-disable react/forbid-prop-types */
 import React from 'react';
 import Typography from '@material-ui/core/Typography';
-
 import DateFnsUtils from '@date-io/date-fns';
 import {
   KeyboardDatePicker,
   MuiPickersUtilsProvider,
 } from '@material-ui/pickers';
-
 import PropTypes from 'prop-types';
 
 export default function DatePicker({

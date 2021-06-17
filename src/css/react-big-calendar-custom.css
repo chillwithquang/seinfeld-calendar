@@ -1,0 +1,98 @@
+:root {
+  --day-bg-color: #f4f5f9;
+  --today-color: #fefaf8;
+  --today-day-bg-color: #f15a27;
+  --today-cell-bg-color: #fefef4;
+  --done-color: #95c11f;
+  --undone-color: #d30000;
+  --uncheck-color: #b2b2b2;
+}
+.rbc-calendar {
+  font-family: 'Lato', sans-serif;
+  height: 100vh;
+  margin: 0px 10px 20px;
+}
+.rbc-toolbar {
+  margin: 5px 15px 25px;
+}
+.rbc-toolbar-label {
+  font-size: 30px;
+}
+.rbc-toolbar button {
+  font-family: 'Lato', sans-serif;
+}
+.rbc-toolbar button:active:hover,
+.rbc-toolbar button:active:focus,
+.rbc-toolbar button.rbc-active,
+.rbc-toolbar button.rbc-active:hover,
+.rbc-toolbar button.rbc-active:focus {
+  color: orangered;
+}
+.rbc-header {
+  font-size: 18px;
+}
+.rbc-month-view {
+  height: 100vh;
+}
+.rbc-date-cell {
+  height: 33px;
+  padding-top: 5px;
+  padding-left: 2px;
+  text-align: left;
+}
+.rbc-day-bg {
+  background-color: var(--day-bg-color);
+}
+.rbc-date-cell.rbc-now {
+  font-weight: normal;
+}
+.rbc-date-cell a {
+  padding: 5px;
+}
+.rbc-now a,
+.rbc-now a:active,
+.rbc-now a:visited {
+  padding: 5px;
+  border-radius: 50%;
+  color: var(--today-color);
+  background-color: var(--today-day-bg-color);
+}
+.rbc-show-more {
+  margin-top: 5px;
+  margin-left: 5px;
+  color: black;
+  text-decoration: none;
+}
+.rbc-overlay {
+  font-family: 'Lato', sans-serif;
+  top: -47px !important;
+}
+.rbc-event-content {
+  position: relative;
+  height: 100%;
+}
+.rbc-time-view .rbc-row {
+  min-height: initial;
+}
+.rbc-today {
+  background-color: var(--today-cell-bg-color);
+}
+.rbc-header.rbc-today {
+  font-weight: normal;
+  color: var(--today-color);
+  background-color: var(--today-day-bg-color);
+}
+.rbc-event-content .MuiButtonBase-root {
+  display: none;
+}
+.rbc-overlay .MuiButtonBase-root {
+  display: inline-flex;
+}
+.single-view .rbc-date-cell {
+  padding-top: 8px;
+  padding-left: 4px;
+}
+.single-view .rbc-month-row .rbc-row:first-child {
+  width: 100%;
+  position: absolute;
+}
