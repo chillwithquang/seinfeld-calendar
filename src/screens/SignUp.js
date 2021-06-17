@@ -9,7 +9,7 @@ import { useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import { useHistory } from 'react-router-dom';
 import { LOGIN_URL, REQUEST_SIGNUP_URL } from '../config/config';
-import { postInfo } from '../helpers/callbacks';
+import { postInfo } from '../services/AxiosServices';
 
 const useStyles = makeStyles((theme) => ({
   root: {

@@ -7,8 +7,8 @@ import Button from '@material-ui/core/Button';
 import Alert from '@material-ui/lab/Alert';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
-import { REQUEST_LOGIN_URL } from '../config/config';
-import { postInfo } from '../helpers/callbacks';
+import { REQUEST_LOGIN_URL, SIGNUP_URL } from '../config/config';
+import { postInfo } from '../services/AxiosServices';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -134,7 +134,7 @@ function Login() {
         >
           LOGIN
         </Button>
-        <Link href="/signup">
+        <Link href={SIGNUP_URL}>
           <Typography variant="body2" align="center">
             Not have an account?
             <strong>{' Sign Up'}</strong>
