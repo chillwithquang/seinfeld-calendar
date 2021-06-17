@@ -4,11 +4,11 @@ import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
 import Link from '@material-ui/core/Link';
 import Button from '@material-ui/core/Button';
-import axios from 'axios';
 import Alert from '@material-ui/lab/Alert';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
-import { BASE_URL } from '../config/config';
+import { REQUEST_LOGIN_URL } from '../config/config';
+import { postInfo } from '../helpers/callbacks';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -57,14 +57,15 @@ function Login() {
     } else {
       setAlert({ severity: 'info', message: 'Verifying...Please wait' });
       setIsLoading(true);
-      const url = `${BASE_URL}/user/log-in`;
-      axios
-        .post(url, state)
-        .then((response) => {
+      const url = REQUEST_LOGIN_URL;
+      postInfo(
+        url,
+        state,
+        (response) => {
           console.log(response.data);
           setAlert({ severity: 'success', message: 'Login successfully!' });
-        })
-        .catch((error) => {
+        },
+        (error) => {
           setIsLoading(false);
           if (error.response.status === 401) {
             setAlert({
@@ -79,7 +80,8 @@ function Login() {
               message: error.response.data.errors[0].msg,
             });
           }
-        });
+        },
+      );
     }
   };
   return (

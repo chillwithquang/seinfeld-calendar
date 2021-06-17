@@ -7,9 +7,9 @@ import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
 import { useState } from 'react';
 import Grid from '@material-ui/core/Grid';
-import axios from 'axios';
 import { useHistory } from 'react-router-dom';
-import { BASE_URL } from '../config/config';
+import { LOGIN_URL, REQUEST_SIGNUP_URL } from '../config/config';
+import { postInfo } from '../helpers/callbacks';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -81,14 +81,15 @@ function SignUp() {
     } else {
       setAlert({ severity: 'info', message: 'Signing up...Please wait' });
       setIsLoading(true);
-      const url = `${BASE_URL}/user/sign-up`;
-      axios
-        .post(url, state)
-        .then((response) => {
+      const url = REQUEST_SIGNUP_URL;
+      postInfo(
+        url,
+        state,
+        (response) => {
           setAlert({ severity: 'success', message: response.data.message });
-          setTimeout(() => history.push('/login'), 3000);
-        })
-        .catch((error) => {
+          setTimeout(() => history.push(LOGIN_URL), 3000);
+        },
+        (error) => {
           setIsLoading(false);
           if (error.response.status === 400) {
             setAlert({
@@ -104,7 +105,8 @@ function SignUp() {
               message: error.response.data.errors[0].msg,
             });
           }
-        });
+        },
+      );
     }
   };
 
