@@ -3,19 +3,26 @@ import ReactDOM from 'react-dom';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 import App from './App';
+import { BLUE, ORANGE } from './config';
 
 const theme = createMuiTheme({
   typography: {
     fontFamily:
       " -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;",
   },
+  palette: {
+    primary: {
+      main: `${ORANGE}`,
+    },
+    secondary: {
+      main: `${BLUE}`,
+    },
+  },
 });
 
 ReactDOM.render(
-  <React.StrictMode>
-    <ThemeProvider theme={theme}>
-      <App />
-    </ThemeProvider>
-  </React.StrictMode>,
+  <ThemeProvider theme={theme}>
+    <App />
+  </ThemeProvider>,
   document.getElementById('root'),
 );

@@ -9,7 +9,7 @@ import { useState } from 'react';
 import Grid from '@material-ui/core/Grid';
 import { useHistory } from 'react-router-dom';
 import { LOGIN_URL, REQUEST_SIGNUP_URL } from '../config';
-import postInfo from '../services/AxiosServices';
+import { postInfo } from '../services/AxiosServices';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -20,10 +20,6 @@ const useStyles = makeStyles((theme) => ({
     margin: theme.spacing(1, 0),
   },
   submit: {
-    backgroundColor: '#37B5E1',
-    '&:hover': {
-      backgroundColor: '#306FC0',
-    },
     margin: theme.spacing(4, 0, 0),
   },
   alert: {
@@ -165,8 +161,8 @@ function SignUp() {
               fullWidth
               name="student"
               variant={state.job === 'student' ? 'contained' : 'outlined'}
-              color="default"
               onClick={() => handleJobChange('student')}
+              color="default"
             >
               STUDENT
             </Button>
@@ -197,7 +193,7 @@ function SignUp() {
         <Button
           fullWidth
           variant="contained"
-          color="primary"
+          color="secondary"
           size="large"
           type="submit"
           disableElevation

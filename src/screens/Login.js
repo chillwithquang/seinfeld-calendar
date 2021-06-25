@@ -8,20 +8,16 @@ import { Alert } from '@material-ui/lab';
 import Box from '@material-ui/core/Box';
 import { makeStyles } from '@material-ui/core/styles';
 import { useHistory } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import { HOME_URL, REQUEST_LOGIN_URL, SIGNUP_URL } from '../config';
-import postInfo from '../services/AxiosServices';
-import withAuth from '../components/withAuth';
+import { HOME_URL, REQUEST_LOGIN_URL, SIGNUP_URL, BLUE_HOVER } from '../config';
+import { postInfo } from '../services/AxiosServices';
 
 const useStyles = makeStyles((theme) => ({
   root: {
-    // margin: theme.spacing('auto'),
     padding: theme.spacing(10, 5),
   },
   submit: {
-    backgroundColor: '#37B5E1',
     '&:hover': {
-      backgroundColor: '#306FC0',
+      backgroundColor: `${BLUE_HOVER}`,
     },
     margin: theme.spacing(3, 0),
   },
@@ -30,7 +26,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function Login({ loggedInUser, setLoggedInUser }) {
+function Login() {
   const classes = useStyles();
   const history = useHistory();
   const [state, setState] = useState({
@@ -54,8 +50,8 @@ function Login({ loggedInUser, setLoggedInUser }) {
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    setLoggedInUser(state.name);
-    if (loggedInUser === '' || state.password === '') {
+    // setLoggedInUser(state.name);
+    if (state.name === '' || state.password === '') {
       setAlert({
         severity: 'error',
         message: 'Please enter your username and password!',
@@ -132,13 +128,13 @@ function Login({ loggedInUser, setLoggedInUser }) {
             {alert.message}
           </Alert>
         ) : null}
-        <Link href={HOME_URL} variant="body2" component="p">
+        <Link href={HOME_URL} variant="body2" component="p" color="secondary">
           Forgot Password
         </Link>
         <Button
           fullWidth
           variant="contained"
-          color="primary"
+          color="secondary"
           size="large"
           type="submit"
           disableElevation
@@ -147,8 +143,8 @@ function Login({ loggedInUser, setLoggedInUser }) {
         >
           LOGIN
         </Button>
-        <Link href={SIGNUP_URL}>
-          <Typography variant="body2" align="center">
+        <Link href={SIGNUP_URL} color="secondary">
+          <Typography variant="body2" align="center" color="secondary">
             Not have an account?
             <strong>{' Sign Up'}</strong>
           </Typography>
@@ -163,14 +159,4 @@ function Login({ loggedInUser, setLoggedInUser }) {
   );
 }
 
-Login.getDefaultProps = {
-  loggedInUser: null,
-  setLoggedInUser: () => {},
-};
-
-Login.propTypes = {
-  loggedInUser: PropTypes.string,
-  setLoggedInUser: PropTypes.func,
-};
-
-export default withAuth(Login);
+export default Login;
