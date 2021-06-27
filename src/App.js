@@ -1,54 +1,59 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
-import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect, withRouter } from 'react-router-dom';
 import Header from './components/Header';
-import { AuthProvider } from './contexts/AuthContext';
 import Home from './screens/Home';
 import Login from './screens/Login';
 import SignUp from './screens/SignUp';
 import { HOME_URL, LOGIN_URL, SIGNUP_URL } from './config';
 import { HabitProvider } from './contexts/HabitContext';
+import { AuthContext } from './contexts/AuthContext';
 
 function App() {
-  return (
-    <BrowserRouter>
-      <AuthProvider initialLoggedInUser="">
-        <HabitProvider>
-          <CssBaseline />
-          <Typography
-            component="div"
-            style={{
-              backgroundColor: '#fff',
-              height: '10vh',
-            }}
-          >
-            <Header />
-          </Typography>
+  const { loggedInUser } = useContext(AuthContext);
 
-          <Typography
-            component="div"
-            style={{
-              backgroundColor: '#fff',
-              height: '90vh',
-            }}
-          >
-            <Switch>
-              <Route exact path={HOME_URL}>
-                <Home />
-              </Route>
-              <Route path={LOGIN_URL}>
-                <Login />
-              </Route>
-              <Route path={SIGNUP_URL}>
-                <SignUp />
-              </Route>
-            </Switch>
-          </Typography>
-        </HabitProvider>
-      </AuthProvider>
-    </BrowserRouter>
+  let routes = (
+    <Switch>
+      <Route path={SIGNUP_URL} component={SignUp} />
+      <Route path={LOGIN_URL} component={Login} />
+      <Redirect exact from={HOME_URL} to={LOGIN_URL} />
+    </Switch>
+  );
+
+  if (loggedInUser !== '') {
+    routes = (
+      <Switch>
+        <Route path="/" component={Home} exact />
+        <Redirect to="/" />
+      </Switch>
+    );
+  }
+
+  return (
+    <HabitProvider>
+      <CssBaseline />
+      <Typography
+        component="div"
+        style={{
+          backgroundColor: '#fff',
+          height: '10vh',
+        }}
+      >
+        <Header />
+      </Typography>
+
+      <Typography
+        component="div"
+        style={{
+          backgroundColor: '#fff',
+          height: '90vh',
+        }}
+      >
+        {routes}
+      </Typography>
+    </HabitProvider>
   );
 }
 
-export default App;
+export default withRouter(App);
