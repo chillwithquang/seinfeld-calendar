@@ -1,7 +1,7 @@
 import PropTypes from 'prop-types';
 import moment from 'moment';
 import { Calendar, momentLocalizer } from 'react-big-calendar';
-import { BG_DONE, BG_UNDONE, DONE_COLOR } from '../config';
+import { BG_DONE, BG_UNDONE, DONE_COLOR, WHITE, BLACK } from '../config';
 import CustomSingleEvent from './CustomSingleEvent';
 
 const eventStyleGetter = (event) => {
@@ -14,14 +14,14 @@ const eventStyleGetter = (event) => {
       backgroundColor = BG_UNDONE;
       break;
     default:
-      backgroundColor = 'white';
+      backgroundColor = `${WHITE}`;
       break;
   }
   return {
     style: {
       backgroundColor,
       borderRadius: '0px',
-      color: 'black',
+      color: `${BLACK}`,
       borderWidth: '2px',
       borderStyle: event.status === 'done' ? 'solid' : 'hidden',
       borderColor: DONE_COLOR,

@@ -1,7 +1,7 @@
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable react/jsx-wrap-multilines */
 import { makeStyles } from '@material-ui/core/styles';
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useContext } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -19,11 +19,14 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControl from '@material-ui/core/FormControl';
 import { Alert } from '@material-ui/lab';
+// import moment from 'moment';
 import TextInput from './TextInput';
 import ColorPicker from './ColorPicker';
-import { postHabit } from '../services/AxiosServices';
+import { postHabit, getInfowithToken } from '../services/AxiosServices';
 import DatePicker from './DatePicker';
 import { HabitContext } from '../contexts/HabitContext';
+import { BLUE } from '../config/colors';
+import { REQUEST_HABITS_URL } from '../config';
 
 const useStyles = makeStyles((theme) => ({
   title: {
@@ -62,27 +65,25 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export default function HabitForm({ idHabit, children }) {
+const initialState = {
+  name: '',
+  slogan: '',
+  dayAfter: '',
+};
+
+export default function HabitForm({ isOpen, handleClickClose }) {
   const classes = useStyles();
 
-  const { message, setMessage } = useContext(HabitContext);
-  const [open, setOpen] = useState(false);
-  const [startDate, setStartDate] = useState(new Date());
-  const [endDate, setEndDate] = useState(new Date());
-  const [pickerDisplay, setPickerDisplay] = useState(true);
-  const [color, setColor] = useState('#1273DE');
-  const [check, setCheck] = useState(false);
-  const [endType, setEndType] = useState('on');
-
-  const [repeatArray, setRepeatArray] = useState(Array(7).fill(false));
-
-  const initialState = {
-    name: '',
-    slogan: '',
-    dayAfter: '',
-  };
+  const { setMessage, setHabits } = useContext(HabitContext);
 
   const [state, setState] = useState(initialState);
+  const [startDate, setStartDate] = useState(new Date());
+  const [endDate, setEndDate] = useState(new Date());
+  const [pickerDisplay, setPickerDisplay] = useState(false);
+  const [color, setColor] = useState(BLUE);
+  const [check, setCheck] = useState(false);
+  const [endType, setEndType] = useState('on');
+  const [repeatArray, setRepeatArray] = useState(Array(7).fill(false));
 
   const [alert, setAlert] = useState({
     severity: '',
@@ -110,12 +111,6 @@ export default function HabitForm({ idHabit, children }) {
     setPickerDisplay(!pickerDisplay);
   };
 
-  useEffect(() => () => {
-    if (open === false) {
-      setPickerDisplay(false);
-    }
-  });
-
   const handleChange = (event) => {
     const { name, value } = event.target;
     setState((prevState) => ({
@@ -125,22 +120,11 @@ export default function HabitForm({ idHabit, children }) {
     setAlert({ ...alert, message: '' });
   };
 
-  const onOpenClick = () => {
-    setAlert({ ...alert, message: '' });
-    if (message) {
-      setMessage('');
-    }
-    setOpen(true);
-  };
-
   const onCloseClick = () => {
-    setState(initialState);
-    setStartDate(new Date());
-    setEndDate(new Date());
-    setOpen(false);
+    handleClickClose(false);
   };
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     if (state.name === '') {
@@ -148,7 +132,6 @@ export default function HabitForm({ idHabit, children }) {
         severity: 'error',
         message: 'Name is not empty!',
       });
-      setOpen(true);
     } else {
       if (endDate.getTime() < startDate.getTime()) {
         setAlert({
@@ -157,7 +140,6 @@ export default function HabitForm({ idHabit, children }) {
         });
 
         setStartDate(new Date());
-        setOpen(true);
         return;
       }
 
@@ -169,14 +151,26 @@ export default function HabitForm({ idHabit, children }) {
         endDate: format(endDate, 'yyyy/MM/dd'),
         repeatArray,
       };
-      setState(initialState);
-      setStartDate(new Date());
-      setEndDate(new Date());
 
-      postHabit(JSON.stringify(data), (response) => {
+      try {
+        const response = await postHabit(JSON.stringify(data));
         setMessage(response.data.message);
-      });
-      setOpen(false);
+        onCloseClick();
+        getInfowithToken(REQUEST_HABITS_URL, (_response) => {
+          setHabits(() => [..._response.data.data]);
+        });
+      } catch (error) {
+        if (error.response && error.response.data) {
+          setAlert({
+            severity: 'error',
+            message: `${
+              error.response.data.message !== 'underfined'
+                ? error.response.data.message
+                : error.response.data.errors[0].msg
+            } `,
+          });
+        }
+      }
     }
   };
 
@@ -190,11 +184,8 @@ export default function HabitForm({ idHabit, children }) {
 
   return (
     <div>
-      <Button variant="contained" color="secondary" onClick={onOpenClick}>
-        {children}
-      </Button>
       <Dialog
-        open={open}
+        open={isOpen || false}
         onClose={onCloseClick}
         aria-labelledby="form-dialog-title"
         disableBackdropClick
@@ -206,7 +197,7 @@ export default function HabitForm({ idHabit, children }) {
             disableTypography={false}
             className={classes.title}
           >
-            {idHabit !== null ? 'UPDATE' : 'CREATE NEW'}
+            CREATE NEW
           </DialogTitle>
         </Typography>
 
@@ -358,14 +349,7 @@ export default function HabitForm({ idHabit, children }) {
   );
 }
 
-HabitForm.defaultProps = {
-  idHabit: null,
-};
-
 HabitForm.propTypes = {
-  idHabit: PropTypes.string,
-  children: PropTypes.oneOfType([
-    PropTypes.arrayOf(PropTypes.node),
-    PropTypes.node,
-  ]).isRequired,
+  isOpen: PropTypes.bool.isRequired,
+  handleClickClose: PropTypes.func.isRequired,
 };

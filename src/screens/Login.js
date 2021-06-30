@@ -62,7 +62,7 @@ function Login() {
       postInfo(
         url,
         state,
-        (response) => {
+        async (response) => {
           const token = response.data.message;
           const user = {
             name: state.name,

@@ -1,67 +1,45 @@
-import { useEffect, useState } from 'react';
+/* eslint-disable no-debugger */
+import { useState, useContext, useEffect } from 'react';
 import moment from 'moment';
-import {
-  REQUEST_ACTIVITES_URL,
-  REQUEST_CHANGE_STATUS_URL,
-  REQUEST_HABITS_URL,
-} from '../config';
+import { REQUEST_CHANGE_STATUS_URL, REQUEST_ACTIVITES_URL } from '../config';
 import CheckForm from '../components/CheckForm';
-import { getInfowithToken, postInfowithToken } from '../services/AxiosServices';
+import { postInfowithToken } from '../services/AxiosServices';
 import CalendarMultiple from '../components/CalendarMultiple';
 import CalendarSingle from '../components/CalendarSingle';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import '../css/react-big-calendar-custom.css';
 import '../css/single-view-custom.css';
+import { HabitContext } from '../contexts/HabitContext';
 
 function Home() {
-  const [habits, setHabits] = useState([]);
+  const { habits } = useContext(HabitContext);
   const [activities, setActivities] = useState([]);
   const [selectedActivity, setSelectedActivity] = useState();
   const [toggleUpdate, setToggleUpdate] = useState(false);
+  const [length, setLength] = useState(0);
 
   useEffect(() => {
-    let mounted = true;
-    getInfowithToken(
-      REQUEST_HABITS_URL,
-      (response) => {
-        if (mounted) {
-          setHabits(response.data.data);
-        }
-      },
-      (error) => console.log(error),
-    );
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    let mounted = true;
-    if (habits.length > 0) {
+    if (habits.length > length) {
       postInfowithToken(
         REQUEST_ACTIVITES_URL,
         {
-          listHabitId: habits.map((habit) => habit.id),
+          listHabitId: habits
+            .slice(length, habits.length)
+            .map((habit) => habit.id),
         },
-
         (response) => {
-          if (mounted) {
-            setActivities(
-              response.data.data.map((activity) => ({
-                ...activity,
-                start: moment(activity.date).startOf('day').toDate(),
-                end: moment(activity.date).startOf('day').toDate(),
-              })),
-            );
-          }
+          const newActivity = response.data.data.map((activity) => ({
+            ...activity,
+            start: moment(activity.date).startOf('day').toDate(),
+            end: moment(activity.date).startOf('day').toDate(),
+          }));
+          setActivities((preActivity) => [...preActivity, ...newActivity]);
+          setLength(habits.length);
         },
         (error) => console.log(error),
       );
     }
-    return () => {
-      mounted = false;
-    };
-  }, [habits, toggleUpdate]);
+  }, [habits.length, toggleUpdate]);
 
   const handleSubmit = (activity) => {
     let mounted = true;

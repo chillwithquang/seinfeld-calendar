@@ -15,3 +15,5 @@ export const DONE_COLOR = '#95C11F';
 export const UNDONE_COLOR = '#D30000';
 export const BG_DONE = '#F2F2F5';
 export const BG_UNDONE = '#D6D6D6';
+export const WHITE = '#FFFFFF';
+export const BLACK = '#000000';

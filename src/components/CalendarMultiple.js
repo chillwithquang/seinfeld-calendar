@@ -2,12 +2,13 @@ import { Calendar, momentLocalizer } from 'react-big-calendar';
 import moment from 'moment';
 import PropTypes from 'prop-types';
 import CustomMultipleEvent from './CustomMultipleEvent';
+import { WHITE, BLACK } from '../config';
 
 const eventStyleGetter = (event) => ({
   style: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: `${WHITE}`,
     borderRadius: '0px',
-    color: 'black',
+    color: `${BLACK}`,
     borderWidth: '0px 0px 0px 5px',
     borderStyle: 'solid',
     borderColor: event.color,
@@ -28,7 +29,7 @@ function CalendarMultiple({ activities, setSelectedActivity }) {
       components={{
         event: CustomMultipleEvent,
       }}
-      style={{ height: '98vh' }}
+      style={{ height: '90vh' }}
       views={{
         day: true,
         week: true,

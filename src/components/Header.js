@@ -64,12 +64,28 @@ const useStyles = makeStyles((theme) => ({
 
 function UserInformation({ avatar, loggedInUser }) {
   const classes = useStyles();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleClickClose = (_isOpen) => {
+    setIsOpen(_isOpen);
+  };
 
   return (
     <div>
       <Toolbar>
         <Typography variant="h6">
-          <HabitForm>Create New Habit</HabitForm>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => setIsOpen(true)}
+          >
+            Create New Habit
+          </Button>
+          {isOpen && (
+            <HabitForm isOpen={isOpen} handleClickClose={handleClickClose}>
+              Create New Habit
+            </HabitForm>
+          )}
         </Typography>
         <Typography variant="body2" className={classes.report}>
           Report
@@ -102,7 +118,7 @@ function Header() {
   const classes = useStyles();
   const [avatar, setAvatar] = useState(null);
   const { loggedInUser, setLoggedInUser } = useContext(AuthContext);
-  const { message } = useContext(HabitContext);
+  const { message, setMessage } = useContext(HabitContext);
   const user = localStorage.getItem('user');
   let name = null;
   if (user !== null) {
@@ -116,6 +132,7 @@ function Header() {
     }
     if (message !== '') {
       toast.info(message);
+      setMessage('');
     }
   }, [name, message]);
 
