@@ -1,6 +1,7 @@
 export const API_URL = 'https://seinfeldcalendar-backend.herokuapp.com';
 export const REQUEST_LOGIN_URL = `${API_URL}/user/log-in`;
 export const REQUEST_SIGNUP_URL = `${API_URL}/user/sign-up`;
+export const HABITS_URL = '/habits';
 export const ADD_HABIT_URL = '/habits/add';
 export const REQUEST_HABITS_URL = `${API_URL}/habits/view-by-userid`;
 export const REQUEST_ACTIVITES_URL = `${API_URL}/activities/view-by-habitId`;

@@ -1,7 +1,9 @@
+/* eslint-disable no-debugger */
+/* eslint-disable no-console */
 /* eslint-disable react/no-array-index-key */
 /* eslint-disable react/jsx-wrap-multilines */
 import { makeStyles } from '@material-ui/core/styles';
-import React, { useState, useContext } from 'react';
+import React, { useState, useEffect, useContext, useCallback } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
@@ -11,7 +13,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import PropTypes from 'prop-types';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
-import { format } from 'date-fns';
+import { format, parse } from 'date-fns';
 import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Switch from '@material-ui/core/Switch';
@@ -19,10 +21,16 @@ import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
 import FormControl from '@material-ui/core/FormControl';
 import { Alert } from '@material-ui/lab';
-// import moment from 'moment';
+import moment from 'moment';
+import addDays from 'date-fns/addDays';
 import TextInput from './TextInput';
 import ColorPicker from './ColorPicker';
-import { postHabit, getInfowithToken } from '../services/AxiosServices';
+import {
+  postHabit,
+  getHabit,
+  getInfowithToken,
+  updateHabit,
+} from '../services/AxiosServices';
 import DatePicker from './DatePicker';
 import { HabitContext } from '../contexts/HabitContext';
 import { BLUE } from '../config/colors';
@@ -68,10 +76,15 @@ const useStyles = makeStyles((theme) => ({
 const initialState = {
   name: '',
   slogan: '',
-  dayAfter: '',
+  dayAfter: 0,
 };
 
-export default function HabitForm({ isOpen, handleClickClose }) {
+const dateFormat = (date) => {
+  const dateMoment = moment(date).format('L');
+  return parse(dateMoment, 'MM/dd/yyyy', new Date());
+};
+
+export default function HabitForm({ idHabit, isOpen, handleClickClose }) {
   const classes = useStyles();
 
   const { setMessage, setHabits } = useContext(HabitContext);
@@ -84,6 +97,29 @@ export default function HabitForm({ isOpen, handleClickClose }) {
   const [check, setCheck] = useState(false);
   const [endType, setEndType] = useState('on');
   const [repeatArray, setRepeatArray] = useState(Array(7).fill(false));
+
+  const updateHabitUser = useCallback(async () => {
+    if (idHabit !== '') {
+      const habit = await getHabit(idHabit);
+      const { data } = habit.data;
+      setState((prevState) => ({
+        ...prevState,
+        name: data.name,
+        slogan: data.slogan,
+      }));
+      setStartDate(dateFormat(data.startDate));
+      setEndDate(dateFormat(data.endDate));
+      setColor(data.color);
+      setRepeatArray(data.repeatArray);
+      if (data.repeatArray.every((item) => item === true)) {
+        setCheck(true);
+      }
+    }
+  }, [idHabit]);
+
+  useEffect(() => {
+    updateHabitUser();
+  }, [updateHabitUser]);
 
   const [alert, setAlert] = useState({
     severity: '',
@@ -152,12 +188,17 @@ export default function HabitForm({ isOpen, handleClickClose }) {
         repeatArray,
       };
 
+      let response = null;
       try {
-        const response = await postHabit(JSON.stringify(data));
-        setMessage(response.data.message);
-        onCloseClick();
+        if (idHabit !== '') {
+          response = await updateHabit(JSON.stringify(data), idHabit);
+        } else {
+          response = await postHabit(JSON.stringify(data));
+        }
         getInfowithToken(REQUEST_HABITS_URL, (_response) => {
           setHabits(() => [..._response.data.data]);
+          setMessage(response.data.message);
+          onCloseClick();
         });
       } catch (error) {
         if (error.response && error.response.data) {
@@ -179,6 +220,9 @@ export default function HabitForm({ isOpen, handleClickClose }) {
       setEndDate(_date);
     } else {
       setStartDate(_date);
+      if (_date > endDate) {
+        setEndDate(_date);
+      }
     }
   };
 
@@ -197,7 +241,7 @@ export default function HabitForm({ isOpen, handleClickClose }) {
             disableTypography={false}
             className={classes.title}
           >
-            CREATE NEW
+            {idHabit ? 'UPDATE' : 'CREATE NEW'}
           </DialogTitle>
         </Typography>
 
@@ -206,10 +250,20 @@ export default function HabitForm({ isOpen, handleClickClose }) {
         )}
         <DialogContent>
           <Grid container spacing={2}>
-            <TextInput id="name" autoFocus onChange={handleChange}>
+            <TextInput
+              id="name"
+              nameHabit={state.name}
+              autoFocus
+              onChange={handleChange}
+            >
               Name
             </TextInput>
-            <TextInput id="slogan" rows={4} onChange={handleChange}>
+            <TextInput
+              id="slogan"
+              slogan={state.slogan}
+              rows={4}
+              onChange={handleChange}
+            >
               Slogan
             </TextInput>
             <Grid item xs={12} sm={6}>
@@ -295,7 +349,7 @@ export default function HabitForm({ isOpen, handleClickClose }) {
             <Grid item xs={12} sm={4}>
               {endType === 'on' ? (
                 <DatePicker
-                  value={endDate}
+                  value={startDate > endDate ? startDate : endDate}
                   minDate={startDate}
                   onChangeDate={onChangeDate}
                   dayEnd
@@ -310,14 +364,16 @@ export default function HabitForm({ isOpen, handleClickClose }) {
                 />
               )}
               <TextField
+                type="number"
                 margin="dense"
                 variant="outlined"
-                value={state.dayAfter}
                 name="dayAfter"
                 disabled={endType !== 'after'}
                 fullWidth
                 style={{ height: 40, padding: 0 }}
-                onChange={handleChange}
+                onChange={(event) => {
+                  setEndDate(addDays(startDate, event.target.value));
+                }}
               />
             </Grid>
             <Grid item xs={12} sm={3} />
@@ -349,7 +405,12 @@ export default function HabitForm({ isOpen, handleClickClose }) {
   );
 }
 
+HabitForm.defaultProps = {
+  idHabit: '',
+};
+
 HabitForm.propTypes = {
+  idHabit: PropTypes.string,
   isOpen: PropTypes.bool.isRequired,
   handleClickClose: PropTypes.func.isRequired,
 };

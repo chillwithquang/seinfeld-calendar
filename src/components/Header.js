@@ -10,7 +10,7 @@ import NotificationsOutlinedIcon from '@material-ui/icons/NotificationsOutlined'
 import Avatar from '@material-ui/core/Avatar';
 import faker from 'faker';
 import PropTypes from 'prop-types';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, withRouter, useHistory } from 'react-router-dom';
 import Icon from '@material-ui/core/Icon';
 import { ToastContainer, toast } from 'react-toastify';
 import { HOME_URL, LOGIN_URL, SIGNUP_URL } from '../config';
@@ -19,6 +19,7 @@ import { AuthContext } from '../contexts/AuthContext';
 import HabitForm from './HabitForm';
 import 'react-toastify/dist/ReactToastify.css';
 import { HabitContext } from '../contexts/HabitContext';
+import MenuAvatar from './MenuAvatar';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -66,6 +67,8 @@ function UserInformation({ avatar, loggedInUser }) {
   const classes = useStyles();
   const [isOpen, setIsOpen] = useState(false);
 
+  const history = useHistory();
+
   const handleClickClose = (_isOpen) => {
     setIsOpen(_isOpen);
   };
@@ -92,9 +95,7 @@ function UserInformation({ avatar, loggedInUser }) {
         </Typography>
         <NotificationsOutlinedIcon className={classes.icon} />
         <Avatar src={avatar} className={classes.avatar} />
-        <Typography variant="subtitle1" className={classes.name}>
-          {loggedInUser}
-        </Typography>
+        <MenuAvatar history={history}>{loggedInUser}</MenuAvatar>
       </Toolbar>
     </div>
   );

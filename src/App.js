@@ -1,3 +1,4 @@
+/* eslint-disable no-debugger */
 import React, { useContext } from 'react';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Typography from '@material-ui/core/Typography';
@@ -6,7 +7,8 @@ import Header from './components/Header';
 import Home from './screens/Home';
 import Login from './screens/Login';
 import SignUp from './screens/SignUp';
-import { HOME_URL, LOGIN_URL, SIGNUP_URL } from './config';
+import Habits from './screens/Habits';
+import { HOME_URL, LOGIN_URL, SIGNUP_URL, HABITS_URL } from './config';
 import { HabitProvider } from './contexts/HabitContext';
 import { AuthContext } from './contexts/AuthContext';
 
@@ -15,17 +17,18 @@ function App() {
 
   let routes = (
     <Switch>
-      <Route path={SIGNUP_URL} component={SignUp} />
-      <Route path={LOGIN_URL} component={Login} />
       <Redirect exact from={HOME_URL} to={LOGIN_URL} />
+      <Route path={LOGIN_URL} component={Login} />
+      <Route path={SIGNUP_URL} component={SignUp} />
     </Switch>
   );
 
   if (loggedInUser !== '') {
     routes = (
       <Switch>
-        <Route path="/" component={Home} exact />
-        <Redirect to="/" />
+        <Route path={HOME_URL} component={Home} exact />
+        <Route path={HABITS_URL} component={Habits} />
+        <Redirect to={HOME_URL} />
       </Switch>
     );
   }

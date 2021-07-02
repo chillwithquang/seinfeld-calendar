@@ -75,7 +75,9 @@ function Home() {
       ) : (
         <CalendarMultiple
           activities={activities}
-          setSelectedActivity={(activity) => setSelectedActivity(activity)}
+          setSelectedActivity={(activity) => {
+            setSelectedActivity(activity);
+          }}
         />
       )}
       {selectedActivity && (
