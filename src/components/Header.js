@@ -10,7 +10,7 @@ import NotificationsOutlinedIcon from '@material-ui/icons/NotificationsOutlined'
 import Avatar from '@material-ui/core/Avatar';
 import faker from 'faker';
 import PropTypes from 'prop-types';
-import { Link, withRouter } from 'react-router-dom';
+import { Link, withRouter, useHistory } from 'react-router-dom';
 import Icon from '@material-ui/core/Icon';
 import { ToastContainer, toast } from 'react-toastify';
 import { HOME_URL, LOGIN_URL, SIGNUP_URL } from '../config';
@@ -19,6 +19,7 @@ import { AuthContext } from '../contexts/AuthContext';
 import HabitForm from './HabitForm';
 import 'react-toastify/dist/ReactToastify.css';
 import { HabitContext } from '../contexts/HabitContext';
+import MenuAvatar from './MenuAvatar';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -64,21 +65,37 @@ const useStyles = makeStyles((theme) => ({
 
 function UserInformation({ avatar, loggedInUser }) {
   const classes = useStyles();
+  const [isOpen, setIsOpen] = useState(false);
+
+  const history = useHistory();
+
+  const handleClickClose = (_isOpen) => {
+    setIsOpen(_isOpen);
+  };
 
   return (
     <div>
       <Toolbar>
         <Typography variant="h6">
-          <HabitForm>CREATE NEW HABIT</HabitForm>
+          <Button
+            variant="contained"
+            color="secondary"
+            onClick={() => setIsOpen(true)}
+          >
+            Create New Habit
+          </Button>
+          {isOpen && (
+            <HabitForm isOpen={isOpen} handleClickClose={handleClickClose}>
+              Create New Habit
+            </HabitForm>
+          )}
         </Typography>
         <Typography variant="body2" className={classes.report}>
           Report
         </Typography>
         <NotificationsOutlinedIcon className={classes.icon} />
         <Avatar src={avatar} className={classes.avatar} />
-        <Typography variant="subtitle1" className={classes.name}>
-          {loggedInUser}
-        </Typography>
+        <MenuAvatar history={history}>{loggedInUser}</MenuAvatar>
       </Toolbar>
     </div>
   );
@@ -102,7 +119,7 @@ function Header() {
   const classes = useStyles();
   const [avatar, setAvatar] = useState(null);
   const { loggedInUser, setLoggedInUser } = useContext(AuthContext);
-  const { message } = useContext(HabitContext);
+  const { message, setMessage } = useContext(HabitContext);
   const user = localStorage.getItem('user');
   let name = null;
   if (user !== null) {
@@ -116,6 +133,7 @@ function Header() {
     }
     if (message !== '') {
       toast.info(message);
+      setMessage('');
     }
   }, [name, message]);
 

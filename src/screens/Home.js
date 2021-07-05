@@ -1,64 +1,46 @@
+/* eslint-disable no-debugger */
+import { useState, useContext, useEffect } from 'react';
 import moment from 'moment';
 import 'react-big-calendar/lib/css/react-big-calendar.css';
 import '../css/react-big-calendar-custom.css';
 import '../css/year-view-custom.css';
-import { useEffect, useState } from 'react';
-import {
-  REQUEST_ACTIVITES_URL,
-  REQUEST_CHANGE_STATUS_URL,
-  REQUEST_HABITS_URL,
-} from '../config';
+import { REQUEST_ACTIVITES_URL, REQUEST_CHANGE_STATUS_URL } from '../config';
 import CheckForm from '../components/CheckForm';
-import { getInfoWithToken, postInfoWithToken } from '../services/AxiosServices';
+import { postInfoWithToken } from '../services/AxiosServices';
 import CalendarMultiple from '../components/CalendarMultiple';
 import CalendarSingle from '../components/CalendarSingle';
 import HabitBanner from '../components/HabitBanner';
 import LoadingLayer from '../components/LoadingLayer';
+import { HabitContext } from '../contexts/HabitContext';
 
 function Home() {
-  const [habits, setHabits] = useState([]);
+  const { habits } = useContext(HabitContext);
   const [activities, setActivities] = useState([]);
   const [selectedActivity, setSelectedActivity] = useState();
-  const [toggleUpdate, setToggleUpdate] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [length, setLength] = useState(0);
 
   useEffect(() => {
     let mounted = true;
     setIsLoading(true);
-    getInfoWithToken(
-      REQUEST_HABITS_URL,
-      (response) => {
-        if (mounted) {
-          setHabits(response.data.data);
-          setIsLoading(false);
-        }
-      },
-      (error) => console.log(error),
-    );
-    return () => {
-      mounted = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    let mounted = true;
-    if (habits.length > 0) {
-      setIsLoading(true);
+    if (habits.length > length) {
       postInfoWithToken(
         REQUEST_ACTIVITES_URL,
         {
-          listHabitId: habits.map((habit) => habit.id),
+          listHabitId: habits
+            .slice(length, habits.length)
+            .map((habit) => habit.id),
         },
         (response) => {
           if (mounted) {
-            setActivities(
-              response.data.data.map((activity) => ({
-                ...activity,
-                start: moment(activity.date).startOf('day').toDate(),
-                end: moment(activity.date).startOf('day').toDate(),
-                title: activity.habitName,
-              })),
-            );
+            const newActivity = response.data.data.map((activity) => ({
+              ...activity,
+              start: moment(activity.date).startOf('day').toDate(),
+              end: moment(activity.date).startOf('day').toDate(),
+            }));
+            setActivities((preActivity) => [...preActivity, ...newActivity]);
+
+            setLength(habits.length);
             setIsLoading(false);
           }
         },
@@ -68,7 +50,7 @@ function Home() {
     return () => {
       mounted = false;
     };
-  }, [habits, toggleUpdate]);
+  }, [habits.length]);
 
   const handleSubmit = (activity) => {
     let mounted = true;
@@ -82,7 +64,10 @@ function Home() {
       },
       () => {
         if (mounted) {
-          setToggleUpdate(!toggleUpdate);
+          const temp = activities.slice();
+          const index = temp.findIndex((_activity) => _activity.id === id);
+          temp[index] = { ...temp[index], status, note };
+          setActivities(temp);
           setSelectedActivity();
         }
       },

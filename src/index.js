@@ -2,8 +2,10 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
+import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import { BLUE, ORANGE } from './config';
+import { AuthProvider } from './contexts/AuthContext';
 
 const theme = createMuiTheme({
   typography: {
@@ -24,8 +26,12 @@ const theme = createMuiTheme({
 });
 
 ReactDOM.render(
-  <ThemeProvider theme={theme}>
-    <App />
-  </ThemeProvider>,
+  <AuthProvider initialLoggedInUser="">
+    <BrowserRouter>
+      <ThemeProvider theme={theme}>
+        <App />
+      </ThemeProvider>
+    </BrowserRouter>
+  </AuthProvider>,
   document.getElementById('root'),
 );

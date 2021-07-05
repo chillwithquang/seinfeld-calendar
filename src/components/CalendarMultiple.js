@@ -3,12 +3,13 @@ import moment from 'moment';
 import PropTypes from 'prop-types';
 import CustomMultipleEvent from './CustomMultipleEvent';
 import Year from './YearMultiple';
+import { WHITE, BLACK } from '../config';
 
 const eventStyleGetter = (event) => ({
   style: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: `${WHITE}`,
     borderRadius: '0px',
-    color: 'black',
+    color: `${BLACK}`,
     borderWidth: '0px 0px 0px 5px',
     borderStyle: 'solid',
     borderColor: event.color,
